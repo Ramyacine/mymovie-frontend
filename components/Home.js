@@ -36,7 +36,7 @@ function Home() {
 
 
         useEffect(() => {
-            fetch('http://localhost:3000/movies')
+            fetch('https://mymovie-backend.vercel.app/movies')
             .then(response => response.json())
             .then(data => {
             setfemovies(data.movies);

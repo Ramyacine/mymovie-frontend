@@ -39,7 +39,7 @@ function Home() {
             fetch('http://localhost:3000/movies')
             .then(response => response.json())
             .then(data => {
-            setfemovies(data.tabmovie);
+            setfemovies(data.movies);
             });
         }, []);
 
@@ -55,7 +55,10 @@ function Home() {
 
   const movies = femovies.map((data, i) => {
     const isLiked = likedMovies.some(movie => movie === data.title);
-    return <Movie key={i} updateLikedMovies={updateLikedMovies} isLiked={isLiked} title={data.title} overview={(data.overview.length) > 250 ? data.overview.substring(0, 250) + '...':  data.overview} poster={data.poster} voteAverage={data.vote_average} voteCount={data.vote_count} />;
+    return <Movie key={i} updateLikedMovies={updateLikedMovies} isLiked={isLiked} 
+    title={data.title} overview={(data.overview.length) > 250 ? data.overview.substring(0, 250) + '...': data.overview} 
+    poster={data.poster_path} voteAverage={data.vote_average} 
+    voteCount={data.vote_count} />;
   });
 
 

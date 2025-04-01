@@ -1,4 +1,4 @@
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Popover, Button } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
@@ -8,7 +8,7 @@ import styles from '../styles/Home.module.css';
 
 function Home() {
   const [likedMovies, setLikedMovies] = useState([]);
-  const [femovies, setfemovies] = useState([]);
+  const [moviesData, setMoviesData] = useState([]);
 
   // Liked movies (inverse data flow)
   const updateLikedMovies = (movieTitle) => {
@@ -34,33 +34,28 @@ function Home() {
     </div>
   );
 
-
-        useEffect(() => {
-            fetch('https://mymovie-backend.vercel.app/movies')
-            .then(response => response.json())
-            .then(data => {
-            setfemovies(data.movies);
-            });
-        }, []);
-
-
   // Movies list
-  // const moviesData = [
-  //   { title: 'Forrest Gump', poster: 'forrestgump.jpg', voteAverage: 9.2, voteCount: 22_705, overview: 'A man with a low IQ has accomplished great things in his life and been present during significant historic events—in each case.' },
-  //   { title: 'The Dark Knight', poster: 'thedarkknight.jpg', voteAverage: 8.5, voteCount: 27_547, overview: 'Batman raises the stakes in his war on crime and sets out to dismantle the remaining criminal organizations that plague the streets.' },
-  //   { title: 'Your name', poster: 'yourname.jpg', voteAverage: 8.5, voteCount: 8_691, overview: 'High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places.' },
-  //   { title: 'Iron Man', poster: 'ironman.jpg', voteAverage: 7.6, voteCount: 22_7726, overview: 'After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.' },
-  //   { title: 'Inception', poster: 'inception.jpg', voteAverage: 8.4, voteCount: 31_546, overview: 'Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life.' },
-  // ];
+  useEffect(() => {
+    fetch('http://localhost:3000/movies')
+      .then(response => response.json())
+      .then(data => {
+        const formatedData = data.movies.map(movie => {
+          const poster = `https://image.tmdb.org/t/p/w500/${movie.poster_path}`;
+          let overview = movie.overview;
+          if (overview.length > 250) {
+            overview = overview.substring(0, 250) + '...';
+          }
 
-  const movies = femovies.map((data, i) => {
+          return { title: movie.title, poster, voteAverage: movie.vote_average, voteCount: movie.vote_count, overview };
+        });
+        setMoviesData(formatedData);
+      });
+  }, []);
+
+  const movies = moviesData.map((data, i) => {
     const isLiked = likedMovies.some(movie => movie === data.title);
-    return <Movie key={i} updateLikedMovies={updateLikedMovies} isLiked={isLiked} 
-    title={data.title} overview={(data.overview.length) > 250 ? data.overview.substring(0, 250) + '...': data.overview} 
-    poster={data.poster_path} voteAverage={data.vote_average} 
-    voteCount={data.vote_count} />;
+    return <Movie key={i} updateLikedMovies={updateLikedMovies} isLiked={isLiked} title={data.title} overview={data.overview} poster={data.poster} voteAverage={data.voteAverage} voteCount={data.voteCount} />;
   });
-
 
   return (
     <div className={styles.main}>
